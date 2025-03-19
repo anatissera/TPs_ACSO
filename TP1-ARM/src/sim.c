@@ -18,3 +18,13 @@ void process_instruction()
 */
 
 // IMPORTANTE: utiliza little endian
+
+/*
+Las flags para leer el ADDS serían
+opcode: 1111 1111 0000 0000 0000 0000 0000 0000
+shift: 0000 0000 1100 0000 0000 0000 0000 0000
+immediate: 0000 0000 0011 1111 1111 1100 0000 0000
+Rn: 0000 0000 0000 0000 0000 0011 1110 0000
+Rd: 0000 0000 0000 0000 0000 0000 0001 1111
+cabe aclarar que con un and &
+*/
