@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "math_operations.h": "c",
+        "log_shift.h": "c"
+    }
+}

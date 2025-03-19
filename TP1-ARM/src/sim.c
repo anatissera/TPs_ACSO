@@ -1,6 +1,14 @@
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
+#include <stdlib.h>
+#include "shell.h"
+
+#include "utils/branches.h"
+#include "utils/decoder.h"
+#include "utils/log_shift.h"
+#include "utils/math_operations.h"
+
 
 void process_instruction()
 {
@@ -17,14 +25,5 @@ void process_instruction()
 4. Actualizar el PC con la proxima instrucción a ejecutar
 */
 
-// IMPORTANTE: utiliza little endian
+// IMPORTANTE: asume que la memoria está en LITTLE ENDIAN
 
-/*
-Las flags para leer el ADDS serían
-opcode: 1111 1111 0000 0000 0000 0000 0000 0000
-shift: 0000 0000 1100 0000 0000 0000 0000 0000
-immediate: 0000 0000 0011 1111 1111 1100 0000 0000
-Rn: 0000 0000 0000 0000 0000 0011 1110 0000
-Rd: 0000 0000 0000 0000 0000 0000 0001 1111
-cabe aclarar que con un and &
-*/
