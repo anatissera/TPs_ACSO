@@ -1,4 +1,4 @@
-#include "loaf_n_store.h"
+#include "load_n_store.h"
 
 // leemos la memoria
 // load y store
