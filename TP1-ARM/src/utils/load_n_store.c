@@ -1,10 +1,16 @@
-#include "decoder.h"
+#include "loaf_n_store.h"
 
 // leemos la memoria
 // load y store, capaz store lo podemos poner aparte
 
+// estructura genérica que pueda guardar los componentes de las instrucciones
+
 /*
-Las flags para leer el ADDS serían
+
+*/
+
+/*
+Las flags para leer el ADDS immediate serían
 opcode: 1111 1111 0000 0000 0000 0000 0000 0000
 shift: 0000 0000 1100 0000 0000 0000 0000 0000
 immediate: 0000 0000 0011 1111 1111 1100 0000 0000
