@@ -17,10 +17,10 @@ void process_instruction()
      * 
      */
 
-    uint32_t instruction = mem_read_32(CURRENT_STATE.pc);
+    uint32_t instruction = mem_read_32(CURRENT_STATE.PC);
     Instruction decoded = decode_instruction(instruction);
     Instruction executed = execute_instruction(decoded);
-    mem_write_32(NEXT_STATE.pc, executed.result);
+    mem_write_32(NEXT_STATE.PC, executed.result);
 }
 // una función para decode y otra para excecute
 /* 1. Ejecutar la instrucción

@@ -21,8 +21,5 @@ extern struct {
     uint32_t pc;
 } CURRENT_STATE, NEXT_STATE;
 
-// Prototipos de funciones de memoria (asumiendo que están definidas en otro archivo)
-uint32_t mem_read_32(uint32_t address);
-void mem_write_32(uint32_t address, uint32_t value);
 
-#endif // PROCESS_INSTRUCTION_H
+#endif
