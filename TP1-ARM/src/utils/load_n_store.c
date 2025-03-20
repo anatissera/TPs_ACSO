@@ -35,6 +35,28 @@ Stur(Instruction decoded){
     NEXT_STATE.PC += 4;
 }
 
+Sturb(Instruction decoded){
+    uint32_t Rn = (decoded >> 5) & 0x1F;
+    uint32_t Rt = (decoded >> 0) & 0x1F;
+    uint32_t imm = (decoded >> 12) & 0x1FF;
+    uint32_t address = CURRENT_STATE.reg[Rn] + imm;
+    uint32_t value = CURRENT_STATE.reg[Rt] & 0xFF;
+    mem_write_32(address, value);
+    NEXT_STATE.PC += 4;
+}
+
+Sturh(Instruction decoded){
+    uint32_t Rn = (decoded >> 5) & 0x1F;
+    uint32_t Rt = (decoded >> 0) & 0x1F;
+    uint32_t imm = (decoded >> 12) & 0x1FF;
+    uint32_t address = CURRENT_STATE.reg[Rn] + imm;
+    uint32_t value = CURRENT_STATE.reg[Rt] & 0xFFFF;
+    mem_write_32(address, value);
+    NEXT_STATE.PC += 4;
+}
+
+
+
 /*
 
 */

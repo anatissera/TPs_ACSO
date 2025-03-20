@@ -2,6 +2,7 @@
 #define PROCESS_INSTRUCTION_H
 
 #include <stdint.h>
+#include "shell.h"
 
 // Definición de la estructura de instrucción
 typedef struct {
