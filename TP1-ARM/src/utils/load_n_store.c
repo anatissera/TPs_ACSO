@@ -1,4 +1,5 @@
 #include "load_n_store.h"
+#include "sim.h"
 
 // leemos la memoria
 // load y store
@@ -24,15 +25,15 @@ ldurb  W1,  [X2,  #0x10]
 
 */
 
-// Stur(Instruction decoded){
-//     uint32_t Rn = (decoded >> 5) & 0x1F;
-//     uint32_t Rt = (decoded >> 0) & 0x1F;
-//     uint32_t imm = (decoded >> 12) & 0x1FF;
-//     uint32_t address = CURRENT_STATE.reg[Rn] + imm;
-//     uint32_t value = CURRENT_STATE.reg[Rt];
-//     mem_write_32(address, value);
-//     NEXT_STATE.PC += 4;
-// }
+Stur(Instruction decoded){
+    uint32_t Rn = (decoded >> 5) & 0x1F;
+    uint32_t Rt = (decoded >> 0) & 0x1F;
+    uint32_t imm = (decoded >> 12) & 0x1FF;
+    uint32_t address = CURRENT_STATE.reg[Rn] + imm;
+    uint32_t value = CURRENT_STATE.reg[Rt];
+    mem_write_32(address, value);
+    NEXT_STATE.PC += 4;
+}
 
 /*
 

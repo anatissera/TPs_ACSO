@@ -1,17 +1,4 @@
-#include <stdio.h>
-#include <assert.h>
-#include <string.h>
-#include <stdlib.h>
-#include "shell.h"
-
-
-#include "utils/additionals.h"
-#include "utils/branches.h"
-#include "utils/load_n_store.h"
-#include "utils/log_shift.h"
-#include "utils/logical_operations.h"
-#include "utils/math_operations.h"
-
+#include "sim.h"
 
 void process_instruction()
 {
@@ -34,12 +21,6 @@ void process_instruction()
 */
 
 // IMPORTANTE: asume que la memoria está en LITTLE ENDIAN
-
-typedef struct {
-    uint32_t opcode;
-    uint32_t operand1;
-    uint32_t operand2;
-} Instruction;
 
 
 Instruction decode_instruction(uint32_t instruction)
