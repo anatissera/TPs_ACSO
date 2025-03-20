@@ -1,6 +1,45 @@
 #include "branches.h"
 
 /*
+B 
+b target
+
+BR 
+br X1
+
+BEQ (B.Cond) 
+cmp X1,X2 
+beq target
+
+BNE (B.Cond) 
+cmp X1,X2 
+bne target
+
+BGT (B.Cond) 
+cmp X1,X2 
+bgt target
+
+BLT (B.Cond) 
+cmp X1,X2 
+blt target
+
+BGE (B.Cond) 
+cmp X1,X2 
+bge target
+
+BLE (B.Cond) 
+cmp X1,X2 
+ble target
+
+CBZ 
+cbz X3, label 
+ 
+CBNZ 
+cbnz X3, label
+
+*/
+
+/*
 1. B() – Salto incondicional
 ¿Qué hace?
 Realiza un salto incondicional a una dirección calculada a partir de un desplazamiento de 26 bits.

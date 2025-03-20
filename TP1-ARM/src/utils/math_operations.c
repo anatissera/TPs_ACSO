@@ -1,5 +1,19 @@
 #include "math_operations.h"
 
+/*
+ADDS (Extended Register, Immediate)
+
+SUBS (Extended Register, Immediate)
+
+CMP (Extended Register, Immediate)
+ 
+ADD (Extended Register & Immediate)
+
+MUL 
+mul X0, X1, X2 (descripción X0 = X1 * X2) 
+*/
+
+
 // void updateFlags(int64_t result) {
 //     NEXT_STATE.FLAG_N = (result < 0);
 //     NEXT_STATE.FLAG_Z = (result == 0);

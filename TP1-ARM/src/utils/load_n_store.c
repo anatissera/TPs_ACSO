@@ -1,10 +1,28 @@
 #include "loaf_n_store.h"
 
 // leemos la memoria
-// load y store, capaz store lo podemos poner aparte
+// load y store
 
-// estructura genérica que pueda guardar los componentes de las instrucciones
+/*
+STUR -  
+stur X1, [X2, #0x10]
 
+STURB
+sturb X1, [X2, #0x10]
+
+STURH 
+sturh W1, [X2, #0x10] 
+
+LDUR 
+ldur X1, [X2, #0x10] 
+ 
+LDURH 
+ldurh  W1,  [X2,  #0x10] 
+
+LDURB 
+ldurb  W1,  [X2,  #0x10] 
+
+*/
 /*
 
 */

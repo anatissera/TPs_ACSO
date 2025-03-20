@@ -1,6 +1,14 @@
 #include "log_shift.h"
 
 /*
+LSL (Immediate) 
+lsl X4, X3, 4
+
+LSR (Immediate) 
+lsr X4, X3, 4
+*/
+
+/*
 1. Descomponer una instrucción ARM en binario para extraer:
 - El tipo de desplazamiento (N).
 - La cantidad de bits a desplazar (immr).
