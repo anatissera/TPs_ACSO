@@ -1,4 +1,13 @@
-#include "sim.h"
+#include <stdlib.h>
+#include "shell.h"
+
+
+#include "utils/additionals.h"
+#include "utils/branches.h"
+#include "utils/load_n_store.h"
+#include "utils/log_shift.h"
+#include "utils/logical_operations.h"
+#include "utils/math_operations.h"
 
 void process_instruction()
 {
@@ -23,18 +32,3 @@ void process_instruction()
 // IMPORTANTE: asume que la memoria está en LITTLE ENDIAN
 
 
-Instruction decode_instruction(uint32_t instruction)
-{
-    Instruction decoded;
-    decoded.opcode = (instruction >> 26) & 0x3F;
-    decoded.operand1 = (instruction >> 16) & 0xFF;
-    decoded.operand2 = (instruction >> 0) & 0xFFFF;
-}
-
-Instruction execute_instruction(Instruction decoded)
-{
-    Instruction executed;
-    executed.opcode = decoded.opcode;
-    executed.operand1 = decoded.operand1;
-    executed.operand2 = decoded.operand2;
-}

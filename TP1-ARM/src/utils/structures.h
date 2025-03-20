@@ -1,17 +1,3 @@
-#include <stdio.h>
-#include <assert.h>
-#include <string.h>
-#include <stdlib.h>
-#include "shell.h"
-
-
-#include "utils/additionals.h"
-#include "utils/branches.h"
-#include "utils/load_n_store.h"
-#include "utils/log_shift.h"
-#include "utils/logical_operations.h"
-#include "utils/math_operations.h"
-
 #ifndef PROCESS_INSTRUCTION_H
 #define PROCESS_INSTRUCTION_H
 

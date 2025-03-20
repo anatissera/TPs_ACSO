@@ -1,5 +1,5 @@
 #include "load_n_store.h"
-#include "sim.h"
+
 
 // leemos la memoria
 // load y store
