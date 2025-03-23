@@ -1,5 +1,6 @@
 #include "load_n_store.h"
 
+
 // leemos la memoria
 // load y store
 
@@ -23,9 +24,53 @@ LDURB
 ldurb  W1,  [X2,  #0x10] 
 
 */
-/*
 
-*/
+Stur(uint32_t instruction)
+{
+    uint32_t opcode = (instruction >> 24) & 0xFF;
+    uint32_t shift = (instruction >> 22) & 0x3;
+    uint32_t immediate = (instruction >> 10) & 0xFFF;
+    uint32_t Rn = (instruction >> 5) & 0x1F;
+    uint32_t Rd = (instruction >> 0) & 0x1F;
+
+    uint64_t address = CURRENT_STATE.REGS[Rn] + immediate;
+    uint64_t value = CURRENT_STATE.REGS[Rd];
+
+    mem_write_32(address, value);
+    NEXT_STATE.PC += 4;
+}
+
+Sturb(uint32_t instruction)
+{
+    uint32_t opcode = (instruction >> 24) & 0xFF;
+    uint32_t shift = (instruction >> 22) & 0x3;
+    uint32_t immediate = (instruction >> 10) & 0xFFF;
+    uint32_t Rn = (instruction >> 5) & 0x1F;
+    uint32_t Rd = (instruction >> 0) & 0x1F;
+
+    uint64_t address = CURRENT_STATE.REGS[Rn] + immediate;
+    uint64_t value = CURRENT_STATE.REGS[Rd] & 0xFF;
+
+    mem_write_32(address, value);
+    NEXT_STATE.PC += 4;
+}
+
+Sturh(uint32_t instruction)
+{
+    uint32_t opcode = (instruction >> 24) & 0xFF;
+    uint32_t shift = (instruction >> 22) & 0x3;
+    uint32_t immediate = (instruction >> 10) & 0xFFF;
+    uint32_t Rn = (instruction >> 5) & 0x1F;
+    uint32_t Rd = (instruction >> 0) & 0x1F;
+
+    uint64_t address = CURRENT_STATE.REGS[Rn] + immediate;
+    uint64_t value = CURRENT_STATE.REGS[Rd] & 0xFFFF;
+
+    mem_write_32(address, value);
+    NEXT_STATE.PC += 4;
+}
+
+
 
 /*
 Las flags para leer el ADDS immediate serían
