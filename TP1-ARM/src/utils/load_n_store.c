@@ -25,7 +25,7 @@ ldurb  W1,  [X2,  #0x10]
 
 */
 
-Stur(uint32_t instruction)
+void Stur(uint32_t instruction)
 {
     uint32_t opcode = (instruction >> 24) & 0xFF;
     uint32_t shift = (instruction >> 22) & 0x3;
@@ -40,7 +40,7 @@ Stur(uint32_t instruction)
     NEXT_STATE.PC += 4;
 }
 
-Sturb(uint32_t instruction)
+void Sturb(uint32_t instruction)
 {
     uint32_t opcode = (instruction >> 24) & 0xFF;
     uint32_t shift = (instruction >> 22) & 0x3;
@@ -55,7 +55,7 @@ Sturb(uint32_t instruction)
     NEXT_STATE.PC += 4;
 }
 
-Sturh(uint32_t instruction)
+void Sturh(uint32_t instruction)
 {
     uint32_t opcode = (instruction >> 24) & 0xFF;
     uint32_t shift = (instruction >> 22) & 0x3;
