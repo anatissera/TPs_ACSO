@@ -1,32 +1,29 @@
 #include "decoder.h"
 
+bool match_opcode(uint32_t instruction, uint32_t mask, uint32_t shift, uint32_t expected) {
+    return ((instruction >> shift) & mask) == expected;
+}
+
 uint32_t decode(uint32_t instruction) {
-    // Extraer el opcode de la instrucción según las máscaras utilizadas en execute()
-    uint32_t op6  = (instruction >> 26) & 0b111111;         // 6 bits
-    uint32_t op8  = (instruction >> 24) & 0xFF;            // 8 bits
-    uint32_t op9  = (instruction >> 23) & 0b111111111;     // 9 bits
-    uint32_t op10 = (instruction >> 22) & 0b1111111111;    // 10 bits
-    uint32_t op11 = (instruction >> 21) & 0b11111111111;   // 11 bits
-    uint32_t op22 = (instruction >> 10) & 0b1111111111111111111111; // 22 bits
-
-    // Comparar con los valores esperados
-    if (op6 == 0b000101) return op6; // B
-    if (op9 == 0b110100101) return op9; // MOVZ
-    if (op10 == 0b1101001101) return op10; // LSL/LSR IMM
-    if (op22 == 0b1101011000011111000000) return op22; // BR
-
-    // Buscar en los arrays predefinidos
-    uint32_t array_opcodes_8[] = {0xb1, 0xab, 0xf1, 0xea, 0xaa, 0xca, 0x54, 0x91, 0xb4, 0xb5};
-    uint32_t array_opcodes_11[] = {0b11101011001, 0b11010100010, 0b11101011001, 0b11111000000, 0b00111000000, 
-                                   0b01111000000, 0b11111000010, 0b01111000010, 0b00111000010, 0b10001011000, 0b10011011000};
+    if (match_opcode(instruction, 0b111111, 26, 0b000101)) return 0b000101; // B
     
-    for (int i = 0; i < sizeof(array_opcodes_8) / sizeof(array_opcodes_8[0]); i++) {
-        if (op8 == array_opcodes_8[i]) return op8;
+    uint32_t op8[] = {0xb1, 0xab, 0xf1, 0xea, 0xaa, 0xca, 0x54, 0x91, 0xb4, 0xb5};
+    uint32_t extracted_op8 = (instruction >> 24) & 0xFF;
+    for (int i = 0; i < 10; i++) {
+        if (extracted_op8 == op8[i]) return op8[i];
     }
     
-    for (int i = 0; i < sizeof(array_opcodes_11) / sizeof(array_opcodes_11[0]); i++) {
-        if (op11 == array_opcodes_11[i]) return op11;
+    if (match_opcode(instruction, 0b111111111, 23, 0b110100101)) return 0b110100101; // MOVZ
+    if (match_opcode(instruction, 0b1111111111, 22, 0b1101001101)) return 0b1101001101; // LSL/LSR
+    
+    uint32_t op11[] = {0b11101011001, 0b11010100010, 0b11101011001, 0b11111000000, 0b00111000000,
+                        0b01111000000, 0b11111000010, 0b01111000010, 0b00111000010, 0b10001011000, 0b10011011000};
+    uint32_t extracted_op11 = (instruction >> 21) & 0b11111111111;
+    for (int i = 0; i < 11; i++) {
+        if (extracted_op11 == op11[i]) return op11[i];
     }
-
-    return -1; // Opcode no reconocido
+    
+    if (match_opcode(instruction, 0b1111111111111111111111, 10, 0b1101011000011111000000)) return 0b1101011000011111000000; // BR
+    
+    return -1;
 }

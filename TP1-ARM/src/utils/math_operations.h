@@ -16,7 +16,7 @@ mul X0, X1, X2 (descripción X0 = X1 * X2)
 void Adds_extended_reg(uint32_t instruction);
 void Adds_imm(uint32_t instruction);
 void Add_extended_reg(uint32_t instruction);
-void Add_immediate(uint32_t instruction);
+void Add_imm(uint32_t instruction);
 void Subs_Cmp_extended_reg(uint32_t instruction);
 void Subs_Cmp_imm(uint32_t instruction);
 void Mul(uint32_t instruction);
