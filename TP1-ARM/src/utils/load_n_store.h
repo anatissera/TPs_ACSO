@@ -1,10 +1,12 @@
 #include "structures.h"
 #pragma once
 
+#include "../shell.h" 
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 /*
 
@@ -27,9 +29,5 @@ LDURB
 ldurb  W1,  [X2,  #0x10] 
 
 */
-void Stur(char * restOfInstruction);
-void Sturb(char * restOfInstruction);
-void Sturh(char * restOfInstruction);
-void Ldur(char * restOfInstruction);
-void Ldurb(char * restOfInstruction);
-void Ldurh(char * restOfInstruction);
+void Stur_h_b(uint32_t instruction);
+void Ldur_h_b(uint32_t instruction);

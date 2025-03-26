@@ -1,9 +1,5 @@
 #include "load_n_store.h"
 
-
-// leemos la memoria
-// load y store
-
 /*
 STUR -  
 stur X1, [X2, #0x10]
@@ -25,51 +21,60 @@ ldurb  W1,  [X2,  #0x10]
 
 */
 
-void Stur(uint32_t instruction)
-{
-    uint32_t opcode = (instruction >> 24) & 0xFF;
-    uint32_t shift = (instruction >> 22) & 0x3;
-    uint32_t immediate = (instruction >> 10) & 0xFFF;
-    uint32_t Rn = (instruction >> 5) & 0x1F;
-    uint32_t Rd = (instruction >> 0) & 0x1F;
+void Stur_h_b(uint32_t instruction) {
+     /*
+    31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+    1  1  1  1  1  0  0  0  0  0  0  imm9(9b)                   0  0  Rn(5b)    Rt(5b)
+    */
+    // 64-bit variant -> size = '11'
 
-    uint64_t address = CURRENT_STATE.REGS[Rn] + immediate;
-    uint64_t value = CURRENT_STATE.REGS[Rd];
-
-    mem_write_32(address, value);
-    NEXT_STATE.PC += 4;
+    // imm9
 }
 
-void Sturb(uint32_t instruction)
-{
-    uint32_t opcode = (instruction >> 24) & 0xFF;
-    uint32_t shift = (instruction >> 22) & 0x3;
-    uint32_t immediate = (instruction >> 10) & 0xFFF;
-    uint32_t Rn = (instruction >> 5) & 0x1F;
-    uint32_t Rd = (instruction >> 0) & 0x1F;
+void Ldur_h_b(uint32_t instruction) {
+    /*
+    31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+    1  1  1  1  1  0  0  0  0  1  0  imm9(9b)                   0  0  Rn(5b)    Rt(5b)
+    */
+    // 64-bit variant -> size = '11'
 
-    uint64_t address = CURRENT_STATE.REGS[Rn] + immediate;
-    uint64_t value = CURRENT_STATE.REGS[Rd] & 0xFF;
+    // imm9
 
-    mem_write_32(address, value);
+    // Extraer Rt (bits 4-0) y Rn (bits 9-5)
+    uint32_t RtNum = instruction & 0x1F;
+    uint32_t RnNum = (instruction >> 5) & 0x1F;
+
+    // Extraer imm9 (bits 20-12) y hacer extensión de signo a 64 bits
+    int64_t imm9 = (instruction >> 12) & 0x1FF;
+    if (imm9 & (1 << 8)) {  // Si el bit más alto (bit 8) es 1
+        imm9 |= ~((1LL << 9) - 1); // Extensión de signo a 64 bits
+    }
+
+    // Obtener los valores de los registros
+    uint64_t Rn_val = CURRENT_STATE.REGS[RnNum];  // Dirección base
+    uint64_t* Rt_val = &NEXT_STATE.REGS[RtNum];  // Puntero al registro destino
+
+    // Calcular la dirección efectiva
+    uint64_t effectiveAddress = Rn_val + imm9;
+
+    // Determinar el tipo de carga
+    uint32_t type = (instruction >> 30) & 0b11;
+
+    if (type == 0b11) {  // LDUR (64-bit)
+        uint64_t lower_half = mem_read_32(effectiveAddress);
+        uint64_t upper_half = ((uint64_t)mem_read_32(effectiveAddress + 4)) << 32;
+        *Rt_val = lower_half | upper_half;
+    } 
+    else if (type == 0b01) {  // LDURH (16-bit)
+        *Rt_val = mem_read_32(effectiveAddress) & 0xFFFF;
+    } 
+    else {  // LDURB (8-bit)
+        *Rt_val = mem_read_32(effectiveAddress) & 0xFF;
+    }
+
+    // Avanzar el PC
     NEXT_STATE.PC += 4;
 }
-
-void Sturh(uint32_t instruction)
-{
-    uint32_t opcode = (instruction >> 24) & 0xFF;
-    uint32_t shift = (instruction >> 22) & 0x3;
-    uint32_t immediate = (instruction >> 10) & 0xFFF;
-    uint32_t Rn = (instruction >> 5) & 0x1F;
-    uint32_t Rd = (instruction >> 0) & 0x1F;
-
-    uint64_t address = CURRENT_STATE.REGS[Rn] + immediate;
-    uint64_t value = CURRENT_STATE.REGS[Rd] & 0xFFFF;
-
-    mem_write_32(address, value);
-    NEXT_STATE.PC += 4;
-}
-
 
 
 /*
@@ -136,44 +141,4 @@ Modifica solo los 16 bits inferiores y deja los otros bits intactos.
 Usa mem_write_32() para escribir el valor combinado.
 Actualiza el PC en 4 bytes.
 ✍️ Alternativa de nombre: storeHalfword() o guardarMedioRegistro().
-
-LOAD
-4. Ldur (Cargar un registro completo de 64 bits)
-✅ Qué hace:
-
-Carga 64 bits (8 bytes) desde memoria a un registro.
-🔨 Cómo lo hace:
-
-Decodifica el desplazamiento de 9 bits con extensión de signo.
-Extrae el registro base (Rn) y el registro de destino (Rt).
-Lee dos valores de 32 bits desde la memoria.
-Combina ambos valores en un registro de 64 bits.
-Actualiza el PC en 4 bytes.
-✍️ Alternativa de nombre: load64() o cargarRegistroCompleto().
-
-5. Ldurb (Cargar un byte de 8 bits)
-✅ Qué hace:
-
-Carga 8 bits (1 byte) desde memoria en un registro.
-🔨 Cómo lo hace:
-
-Decodifica el desplazamiento de 9 bits con extensión de signo.
-Extrae el registro base (Rn) y el registro de destino (Rt).
-Lee 32 bits desde memoria y se queda solo con los 8 bits inferiores.
-Escribe esos 8 bits en el registro de destino.
-Actualiza el PC en 4 bytes.
-✍️ Alternativa de nombre: loadByte() o cargarByte().
-
-6. Ldurh (Cargar media palabra de 16 bits)
-✅ Qué hace:
-
-Carga 16 bits (2 bytes) desde memoria a un registro.
-🔨 Cómo lo hace:
-
-Decodifica el desplazamiento de 9 bits con extensión de signo.
-Extrae el registro base (Rn) y el registro de destino (Rt).
-Lee 32 bits desde memoria y se queda con los 16 bits inferiores.
-Escribe esos 16 bits en el registro de destino.
-Actualiza el PC en 4 bytes.
-✍️ Alternativa de nombre: loadHalfword() o cargarMedioRegistro().
 */

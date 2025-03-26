@@ -9,17 +9,13 @@
 #include "utils/logical_operations.h"
 #include "utils/math_operations.h"
 
-typedef struct {
-  uint32_t opcode_mask;
-  uint32_t opcode_value;
-  void (*function)(uint32_t);
-} OpcodeEntry;
+
 
 // void Subs_Cmp_extended_reg(uint32_t instruction);
 // void Subs_Cmp_imm(uint32_t instruction);
 
 void execute(uint32_t instruction) {
-  OpcodeEntry opcodes[] = {
+  Opcode_Entry opcodes[] = {
       {0xFFC00000, 0b10101011000, Adds_extended_reg},  
       {0xFFFFFC00, 0b10110001, Adds_imm},             
       {0xFFC00000, 0b11101011000, Subs_Cmp_extended_reg}, 
@@ -33,12 +29,12 @@ void execute(uint32_t instruction) {
       {0xFFFFFFFF, 0b1101011000111111000000, Br},  
       {0xFFFFFC00, 0b01010100, B_cond},
       {0xFFFFFC00, 0b110100110, lsl_lsr_imm},
-      {0xFFC00000, 0b11111000000, Stur},
-      {0xFFC00000, 0b00111000000, Sturb},
-      {0xFFC00000, 0b01111000000, Sturh},
-      {0xFFC00000, 0b11111000010, Ldur},
-      {0xFFC00000, 0b00111000010, Ldurb},
-      {0xFFC00000, 0b01111000010, Ldurh},
+      {0xFFC00000, 0b11111000000, Stur_h_b},
+      {0xFFC00000, 0b00111000000, Stur_h_b},
+      {0xFFC00000, 0b01111000000, Stur_h_b},
+      {0xFFC00000, 0b11111000010, Ldur_h_b},
+      {0xFFC00000, 0b00111000010, Ldur_h_b},
+      {0xFFC00000, 0b01111000010, Ldur_h_b},
 
       {0xFFC00000, 0b10001011000, Add_extended_reg},
       {0xFFFFFC00, 0b10010001, Add_immediate},
