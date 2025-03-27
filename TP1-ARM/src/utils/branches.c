@@ -44,12 +44,14 @@ void B(uint32_t instruction){
     31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
     0 |0  0  1  0  1 |imm26 (26 bits)
     */
-   int64_t imm26 = instruction & 0x3FFFFFF;
+    int64_t imm26 = instruction & 0x3FFFFFF;
 
-   if (imm26 & (1<<25)){
+    if (imm26 & (1<<25)){
+        imm26 |= ~((1LL << 26)-1);
+    }
 
-   }
-   
+    int64_t offset = imm26 << 2;//Lo multiplica por 4 (alineación).
+    NEXT_STATE.PC = CURRENT_STATE.PC + offset;
 
     
 }
@@ -59,11 +61,8 @@ void Br(uint32_t instruction){
     31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
     1  1  0  1  0  1  1 |0  0 |0  0 |1  1  1  1  1 |0  0  0  0  0  0 |Rn       |0 0 0 0 0
     */
-   uint32_t Rn_num = (instruction >> 5) & 0x1F;
-
-
-
-
+    uint32_t Rn_num = (instruction >> 5) & 0x1F;
+    NEXT_STATE.PC = CURRENT_STATE.REGS[Rn_num];
 }
 
 void B_cond(uint32_t instruction){
@@ -71,6 +70,7 @@ void B_cond(uint32_t instruction){
     31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
     0  1  0  1  0  1  0 |0 |imm19 (19 bits)                                    |0 |cond
     */
+
     uint32_t cond = instruction & 0xF;
     int64_t imm19 = (instruction >> 5) & 0x7FFFF;
 
@@ -78,6 +78,38 @@ void B_cond(uint32_t instruction){
         imm19 |= ~((1LL << 19)-1);
     }
 
+    int64_t target_address = CURRENT_STATE.PC + (imm19 << 2);
+
+    // cond	          Condición          	   Evaluación con V = 0, C = 0
+    // 0000 (0)	      BEQ (Z == 1)	           Z == 1
+    // 0001 (1)	      BNE (Z == 0)	           Z == 0
+    // 1010 (10)	  BGT (Z == 0 y N == V)	   Z == 0 y N == 0
+    // 1011 (11)	  BLT (N != V)	           N != 0
+    // 1100 (12)	  BGE (N == V)	           N == 0
+    // 1101 (13)	  BLE (Z == 1 o N != V)	   Z == 1 o N != 0
+
+    switch (cond) {
+        case 0b0000:  // BEQ (Z == 1)
+            if (FLAG_Z) { NEXT_STATE.PC = target_address; }
+            break;
+        case 0b0001:  // BNE (Z == 0)
+            if (!FLAG_Z) { NEXT_STATE.PC = target_address; }
+            break;
+        case 0b1010:  // BGT (Z == 0 y N == 0)
+            if (!FLAG_Z && !FLAG_N) { NEXT_STATE.PC = target_address; }
+            break;
+        case 0b1011:  // BLT (N != 0)
+            if (FLAG_N) { NEXT_STATE.PC = target_address; }
+            break;
+        case 0b1100:  // BGE (N == 0) 
+            if (!FLAG_N) { NEXT_STATE.PC = target_address; }
+            break;
+        case 0b1101:  // BLE (Z == 1 o N != 0)
+            if (FLAG_Z || FLAG_N) { NEXT_STATE.PC = target_address; }
+            break;
+        default:
+            break;
+    }
 }
 
 void Cbz(uint32_t instruction){
@@ -138,24 +170,6 @@ Extrae el número del registro Rn (5 bits).
 Actualiza el NEXT_STATE.PC con el valor de CURRENT_STATE.REGS[Rn].
 Ejemplo en ARM64:
 BR X1      ; Salta a la dirección contenida en el registro X1
-
-
-3. Bcond() – Salto condicional basado en flags
-¿Qué hace?
-Realiza un salto condicional basado en los valores de los flags (Z, N, etc.).
-Proceso:
-Extrae el desplazamiento de 19 bits y lo extiende con signo.
-Extrae el código de condición (4 bits).
-Evalúa la condición según los flags:
-0 → BEQ (Z == 1)
-1 → BNE (Z == 0)
-10 → BGT (Z == 0 y N == V)
-11 → BLT (N != V)
-12 → BGE (N == V)
-13 → BLE (Z == 1 o N != V)
-Si la condición se cumple, actualiza el NEXT_STATE.PC con el desplazamiento.
-Ejemplo en ARM64:
-B.EQ label ; Salta si el flag Z está en 1 (igual)
 
 
 4. cbz_cbnz() – Salto condicional por comparación a cero
