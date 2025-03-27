@@ -133,7 +133,7 @@ void Cbz_Cbnz(uint32_t instruction){
 
     uint32_t op = (instruction >> 24) & 0b1;
 
-    uint64_t branch_target = CURRENT_STATE.PC + (imm19 << 2);
+    int64_t branch_target = (int64_t)CURRENT_STATE.PC + ((int64_t)imm19 << 2);
 
     if (!op) { // CBZ
         if (Rt_val == 0) {
