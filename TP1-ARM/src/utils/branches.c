@@ -133,7 +133,7 @@ void Cbz_Cbnz(uint32_t instruction){
 
     uint32_t op = (instruction >> 24) & 0b1;
 
-    int64_t branch_target = (int64_t)CURRENT_STATE.PC + ((int64_t)imm19 << 2);
+    int64_t branch_target = (int64_t)CURRENT_STATE.PC + (imm19 << 2);
 
     if (!op) { // CBZ
         if (Rt_val == 0) {
@@ -146,22 +146,3 @@ void Cbz_Cbnz(uint32_t instruction){
     }
 
 }
-
-/*
-
-4. cbz_cbnz() – Salto condicional por comparación a cero
-¿Qué hace?
-Realiza un salto condicional dependiendo de si el contenido de un registro es cero o no es cero.
-Proceso:
-Extrae el desplazamiento de 19 bits y lo extiende con signo.
-Obtiene el número del registro Rt.
-Si el valor del registro cumple con la condición (cero o no cero), actualiza el NEXT_STATE.PC.
-Uso de la función unificada:
-cbz_cbnz(restOfInstruction, true);  // Para CBZ (si el registro es cero)
-cbz_cbnz(restOfInstruction, false); // Para CBNZ (si el registro NO es cero)
-
-Ejemplos en ARM64:
-CBZ X1, label  ; Salta si X1 == 0
-CBNZ X1, label ; Salta si X1 != 0
-
-*/
