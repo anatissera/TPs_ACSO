@@ -50,11 +50,6 @@ rdump
 si quiero ver el simulador, correr ref_sim_x86
 */
 
-void updateFlagsFunction(int64_t result) {
-    NEXT_STATE.FLAG_N = (result < 0);
-    NEXT_STATE.FLAG_Z = (result == 0);
-}
-
 int64_t add(uint32_t instruction, bool updateFlags, bool extended, bool immediate)
 {
     /* 64-bit variant
@@ -86,7 +81,7 @@ int64_t add(uint32_t instruction, bool updateFlags, bool extended, bool immediat
     }
 
     if (updateFlags) { // if true, instruction is ADDS
-        updateFlagsFunction(result);
+        update_flags(result);
     }
 
     return result;
@@ -102,8 +97,7 @@ int64_t sub(char * restOfInstruction, bool updateFlags, bool extended, bool imme
         result = CURRENT_STATE.REGS[restOfInstruction[0]] - restOfInstruction[1];
     }
     if (updateFlags) { //if true, instruction is SUBS
-        NEXT_STATE.FLAG_N = (result < 0);
-        NEXT_STATE.FLAG_Z = (result == 0);
+        update_flags(result);
     }
     return result;
 }
