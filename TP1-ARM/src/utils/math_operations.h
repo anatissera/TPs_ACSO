@@ -1,4 +1,7 @@
 #include "structures.h"
+#include <inttypes.h>
+#include <stdio.h>
+#include <stdbool.h>
 
 /*
 ADDS (Extended Register, Immediate)

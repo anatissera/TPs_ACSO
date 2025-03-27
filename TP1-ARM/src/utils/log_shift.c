@@ -20,3 +20,6 @@ lsr X4, X3, 4
 4. Avanza el PC al siguiente ciclo de instrucción.     NEXT_STATE.PC  += 4;
 */
 
+void lsl_lsr_imm(uint32_t instruction){
+    
+}

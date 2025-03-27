@@ -1,5 +1,22 @@
 #include "math_operations.h"
 
+/* 
+Aclaración de Especificaciones: 
+1.  Repetimos, solo tienen que hacer la variante de la instrucción para 64 bits.  
+2.  ADDS (Extended Register) tiene el siguiente formato en el manual
+| 31 30 29 28 | 27 26 25 24 | 23 22 21  20 |       16 | 15   13 12 |   10 9   |    5 4  |    0 |
+  sf| 0| 1 |0   1   0  1  1 | 0  0 | 1 |     Rm       | option |  imm3   |     rn   |    rd    |
+
+Pero cuando compilamos la instrucción ADDS Xd, Xn, Xm el bit 21 de output es 0, no 1. 
+Por favor asegúrense de que ande ADDS. Lo mismo ocurre con SUBS.
+
+Cuando hacemos ADDS (Extended Register) vemos eso:
+No tienen que implementar la parte de extended y amount (O sea, pueden asumir que 
+es 0). Solo implementen ADDS Xd, Xn, Xm. Lo mismo con SUBS.
+
+*/
+
+
 add(char * restOfInstruction, bool updateFlags, bool extended, bool immediate)
 {
     int64_t result;
@@ -62,10 +79,10 @@ mul X0, X1, X2 (descripción X0 = X1 * X2)
 */
 
 
-// void updateFlags(int64_t result) {
-//     NEXT_STATE.FLAG_N = (result < 0);
-//     NEXT_STATE.FLAG_Z = (result == 0);
-// }
+void updateFlags(int64_t result) {
+    NEXT_STATE.FLAG_N = (result < 0);
+    NEXT_STATE.FLAG_Z = (result == 0);
+}
 
 /*
 add(char * restOfInstruction, bool updateFlags, bool extended, bool immediate);
