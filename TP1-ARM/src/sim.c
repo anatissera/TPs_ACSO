@@ -1,7 +1,6 @@
 // // void Subs_Cmp_extended_reg(uint32_t instruction);
 // // void Subs_Cmp_imm(uint32_t instruction);
 
-
 #include <stdlib.h>
 
 #include "shell.h"
@@ -15,7 +14,6 @@
 #include "utils/logical_operations.h"
 #include "utils/math_operations.h"
 
-
 // typedef struct {
 //   uint32_t opcode;
 //   void (*execute)(uint32_t);
@@ -24,10 +22,10 @@
 void execute(uint32_t opcode, uint32_t instruction) {
   Opcode_Entry instructions[] = {
 
-      // {0x91, Add_imm},
-      // {0b10001011000, Add_extended_reg},
-      // {0xb1, Adds_imm},
-      // {0xab, Adds_extended_reg},
+      {0x91, Add_imm},
+      {0x8b, Add_extended_reg},
+      {0xb1, Adds_imm},
+      {0xab, Adds_extended_reg},
       // {0xf1, Subs_Cmp_imm},
       // {0b11101011001, Subs_Cmp_extended_reg},
       // {0b11010100010, HLT},
