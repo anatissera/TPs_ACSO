@@ -44,6 +44,13 @@ void B(uint32_t instruction){
     31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
     0 |0  0  1  0  1 |imm26 (26 bits)
     */
+   int64_t imm26 = instruction & 0x3FFFFFF;
+
+   if (imm26 & (1<<25)){
+
+   }
+   
+
     
 }
 
@@ -52,6 +59,10 @@ void Br(uint32_t instruction){
     31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
     1  1  0  1  0  1  1 |0  0 |0  0 |1  1  1  1  1 |0  0  0  0  0  0 |Rn       |0 0 0 0 0
     */
+   uint32_t Rn_num = (instruction >> 5) & 0x1F;
+
+
+
 
 }
 
@@ -60,15 +71,50 @@ void B_cond(uint32_t instruction){
     31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
     0  1  0  1  0  1  0 |0 |imm19 (19 bits)                                    |0 |cond
     */
+    uint32_t cond = instruction & 0xF;
+    int64_t imm19 = (instruction >> 5) & 0x7FFFF;
+
+    if (imm19 & (1<< 18)){ // bit extend a 64
+        imm19 |= ~((1LL << 19)-1);
+    }
 
 }
 
 void Cbz(uint32_t instruction){
+    /*
+    31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+    sf  0  1  1  0  1  0 |0| imm19                                             |Rt
+    */
+
+    uint32_t Rt_num = instruction & 0x1F;
+
+    int64_t imm19 = (instruction >> 5) & 0x7FFFF;
+
+    if (imm19 & (1<< 18)){ // bit extend
+        imm19 |= ~((1LL << 19)-1);
+    }
+
+    uint64_t Rt_val = CURRENT_STATE.REGS[Rt_num];
+
+     
 
 }
 
 void Cbnz(uint32_t instruction){
+    /*
+    31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
+    sf  0  1  1  0  1  0 |1| imm19                                             |Rt
+    */
 
+    uint32_t Rt_num = instruction & 0x1F;
+
+    int64_t imm19 = (instruction >> 5) & 0x7FFFF;
+
+    if (imm19 & (1<< 18)){ // bit extend
+        imm19 |= ~((1LL << 19)-1);
+    }
+
+    uint64_t Rt_val = CURRENT_STATE.REGS[Rt_num];
 }
 
 /*
