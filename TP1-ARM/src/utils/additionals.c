@@ -18,7 +18,7 @@ void Movz(uint32_t instruction){
     NEXT_STATE.REGS[t_register] = (uint64_t)imm << shift;
 }
 
-void HLT(uint32_t instruction){  
-    
+void HLT(uint32_t instruction){ 
+    RUN_BIT = 0; 
 }
 

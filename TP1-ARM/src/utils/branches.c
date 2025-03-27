@@ -1,44 +1,5 @@
 #include "branches.h"
 
-/*
-B 
-b target
-
-BR 
-br X1
-
-BEQ (B.Cond) 
-cmp X1,X2 
-beq target
-
-BNE (B.Cond) 
-cmp X1,X2 
-bne target
-
-BGT (B.Cond) 
-cmp X1,X2 
-bgt target
-
-BLT (B.Cond) 
-cmp X1,X2 
-blt target
-
-BGE (B.Cond) 
-cmp X1,X2 
-bge target
-
-BLE (B.Cond) 
-cmp X1,X2 
-ble target
-
-CBZ 
-cbz X3, label 
- 
-CBNZ 
-cbnz X3, label
-
-*/
-
 void B(uint32_t instruction){
     /*
     31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0

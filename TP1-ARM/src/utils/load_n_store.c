@@ -113,9 +113,9 @@ void Ldur_h_b(uint32_t instruction) {
     else if (size == 0b00){  // LDURB (8-bit)
         *Rt_val = mem_read_32(effective_address) & 0xFF;
     }
-    else{
-        printf("Tipo de carga no reconocido: 0x%X\n", size);
-    }
+    // else{
+    //     printf("Tipo de carga no reconocido: 0x%X\n", size);
+    // }
 
-    NEXT_STATE.PC += 4;
+    // NEXT_STATE.PC += 4;
 }
