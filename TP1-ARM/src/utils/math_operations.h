@@ -27,8 +27,6 @@ void Subs_Cmp_extended_reg(uint32_t instruction);
 void Subs_Cmp_imm(uint32_t instruction);
 void Mul(uint32_t instruction);
 
-void updateFlagsFunction(int64_t result);
-
 
 // void Subs_Cmp_extended_reg(uint32_t instruction);
 // void Subs_Cmp_imm(uint32_t instruction);

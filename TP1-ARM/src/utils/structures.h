@@ -14,7 +14,7 @@ typedef struct {
 // void process_instruction(void);
 
 
-uint32_t global_nzcv = 0;  // Registro de estado simulado
+extern uint32_t global_nzcv;  // Registro de estado simulado
 #define NZCV global_nzcv   // Definimos NZCV como alias de la variable
 
 // Definiciones de los flags
