@@ -61,6 +61,7 @@ void Br(uint32_t instruction){
     31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
     1  1  0  1  0  1  1 |0  0 |0  0 |1  1  1  1  1 |0  0  0  0  0  0 |Rn       |0 0 0 0 0
     */
+
     uint32_t Rn_num = (instruction >> 5) & 0x1F;
     NEXT_STATE.PC = CURRENT_STATE.REGS[Rn_num];
 }
@@ -112,10 +113,12 @@ void B_cond(uint32_t instruction){
     }
 }
 
-void Cbz(uint32_t instruction){
+void Cbz_Cbnz(uint32_t instruction){
     /*
     31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
-    sf  0  1  1  0  1  0 |0| imm19                                             |Rt
+    sf  0  1  1  0  1  0 |op| imm19                                             |Rt
+    op = 0 -> Cbz
+    op = 1 -> Cbnz
     */
 
     uint32_t Rt_num = instruction & 0x1F;
@@ -128,49 +131,23 @@ void Cbz(uint32_t instruction){
 
     uint64_t Rt_val = CURRENT_STATE.REGS[Rt_num];
 
-     
+    uint32_t op = (instruction >> 24) & 0b1;
 
-}
+    uint64_t branch_target = CURRENT_STATE.PC + (imm19 << 2);
 
-void Cbnz(uint32_t instruction){
-    /*
-    31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
-    sf  0  1  1  0  1  0 |1| imm19                                             |Rt
-    */
-
-    uint32_t Rt_num = instruction & 0x1F;
-
-    int64_t imm19 = (instruction >> 5) & 0x7FFFF;
-
-    if (imm19 & (1<< 18)){ // bit extend
-        imm19 |= ~((1LL << 19)-1);
+    if (!op) { // CBZ
+        if (Rt_val == 0) {
+            CURRENT_STATE.PC = branch_target;
+        }
+    } else { // CBNZ
+        if (Rt_val != 0) {
+            CURRENT_STATE.PC = branch_target;
+        }
     }
 
-    uint64_t Rt_val = CURRENT_STATE.REGS[Rt_num];
 }
 
 /*
-1. B() – Salto incondicional
-¿Qué hace?
-Realiza un salto incondicional a una dirección calculada a partir de un desplazamiento de 26 bits.
-Proceso:
-Extrae el desplazamiento de 26 bits.
-Lo extiende con signo a 64 bits.
-Lo multiplica por 4 (alineación).
-Suma el desplazamiento al CURRENT_STATE.PC para actualizar el NEXT_STATE.PC.
-Ejemplo en ARM64:
-B label    ; Salta incondicionalmente a 'label'
-
-
-2. Br() – Salto indirecto por registro
-¿Qué hace?
-Realiza un salto incondicional a la dirección almacenada en un registro.
-Proceso:
-Extrae el número del registro Rn (5 bits).
-Actualiza el NEXT_STATE.PC con el valor de CURRENT_STATE.REGS[Rn].
-Ejemplo en ARM64:
-BR X1      ; Salta a la dirección contenida en el registro X1
-
 
 4. cbz_cbnz() – Salto condicional por comparación a cero
 ¿Qué hace?

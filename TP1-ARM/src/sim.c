@@ -15,12 +15,6 @@
 #include "utils/logical_operations.h"
 #include "utils/math_operations.h"
 
-
-// typedef struct {
-//   uint32_t opcode;
-//   void (*execute)(uint32_t);
-// } Instruction;
-
 void execute(uint32_t opcode, uint32_t instruction) {
   Opcode_Entry instructions[] = {
 
@@ -40,14 +34,14 @@ void execute(uint32_t opcode, uint32_t instruction) {
       // {0b1101011000011111000000, Br},
       {0b110100101, Movz},
       // {0b1101001101, lsl_lsr_imm},
-      {0b11111000000, Stur_h_b},
-      {0b00111000000, Stur_h_b},
-      {0b01111000000, Stur_h_b},
-      {0b11111000010, Ldur_h_b},
-      {0b01111000010, Ldur_h_b},
-      {0b00111000010, Ldur_h_b},
-      // {0b10110100, Cbz},
-      // {0b10110101, Cbnz}
+      {0b11111000000, Stur_h_b}, // Stur
+      {0b00111000000, Stur_h_b}, // Sturb
+      {0b01111000000, Stur_h_b}, // Sturh
+      {0b11111000010, Ldur_h_b}, // Ldur
+      {0b00111000010, Ldur_h_b}, // Ldurb
+      {0b01111000010, Ldur_h_b}, // Ldurh
+      {0b10110100, Cbz_Cbnz}, // Cbz
+      {0b10110101, Cbz_Cbnz} // Cbnz
   };
   
   for (int i = 0; i < sizeof(instructions) / sizeof(instructions[0]); i++) {

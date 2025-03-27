@@ -17,52 +17,52 @@ es 0). Solo implementen ADDS Xd, Xn, Xm. Lo mismo con SUBS.
 */
 
 
-add(char * restOfInstruction, bool updateFlags, bool extended, bool immediate)
-{
-    int64_t result;
-    if (extended)
-    {
-        result = CURRENT_STATE.REGS[restOfInstruction[0]] + CURRENT_STATE.REGS[restOfInstruction[1]];
-    } else if (immediate) {
-        result = CURRENT_STATE.REGS[restOfInstruction[0]] + restOfInstruction[1];
-    }
-    if (updateFlags) { //if true, instruction is ADDS
-        NEXT_STATE.FLAG_N = (result < 0);
-        NEXT_STATE.FLAG_Z = (result == 0);
-    }
-    return result;
-}
+// add(char * restOfInstruction, bool updateFlags, bool extended, bool immediate)
+// {
+//     int64_t result;
+//     if (extended)
+//     {
+//         result = CURRENT_STATE.REGS[restOfInstruction[0]] + CURRENT_STATE.REGS[restOfInstruction[1]];
+//     } else if (immediate) {
+//         result = CURRENT_STATE.REGS[restOfInstruction[0]] + restOfInstruction[1];
+//     }
+//     if (updateFlags) { //if true, instruction is ADDS
+//         NEXT_STATE.FLAG_N = (result < 0);
+//         NEXT_STATE.FLAG_Z = (result == 0);
+//     }
+//     return result;
+// }
 
-sub(char * restOfInstruction, bool updateFlags, bool extended, bool immediate)
-{
-    int64_t result;
-    if (extended)
-    {
-        result = CURRENT_STATE.REGS[restOfInstruction[0]] - CURRENT_STATE.REGS[restOfInstruction[1]];
-    } else if (immediate) {
-        result = CURRENT_STATE.REGS[restOfInstruction[0]] - restOfInstruction[1];
-    }
-    if (updateFlags) { //if true, instruction is SUBS
-        NEXT_STATE.FLAG_N = (result < 0);
-        NEXT_STATE.FLAG_Z = (result == 0);
-    }
-    return result;
-}
+// sub(char * restOfInstruction, bool updateFlags, bool extended, bool immediate)
+// {
+//     int64_t result;
+//     if (extended)
+//     {
+//         result = CURRENT_STATE.REGS[restOfInstruction[0]] - CURRENT_STATE.REGS[restOfInstruction[1]];
+//     } else if (immediate) {
+//         result = CURRENT_STATE.REGS[restOfInstruction[0]] - restOfInstruction[1];
+//     }
+//     if (updateFlags) { //if true, instruction is SUBS
+//         NEXT_STATE.FLAG_N = (result < 0);
+//         NEXT_STATE.FLAG_Z = (result == 0);
+//     }
+//     return result;
+// }
 
-mul(char * restOfInstruction)
-{
-    //ejemplo de uso: mul X0, X1, X2 (descripción X0 = X1 * X2) 
-    int64_t result;
-    result = CURRENT_STATE.REGS[restOfInstruction[0]] * CURRENT_STATE.REGS[restOfInstruction[1]];
-    CURRENT_STATE.REGS[restOfInstruction[2]] = result;
-    return result;
-}
+// mul(char * restOfInstruction)
+// {
+//     //ejemplo de uso: mul X0, X1, X2 (descripción X0 = X1 * X2) 
+//     int64_t result;
+//     result = CURRENT_STATE.REGS[restOfInstruction[0]] * CURRENT_STATE.REGS[restOfInstruction[1]];
+//     CURRENT_STATE.REGS[restOfInstruction[2]] = result;
+//     return result;
+// }
 
-cmp(char * restOfInstruction, bool extended, bool immediate)
-{
-    int64_t result;
+// cmp(char * restOfInstruction, bool extended, bool immediate)
+// {
+//     int64_t result;
     
-}
+// }
 
 
 /*
@@ -79,10 +79,6 @@ mul X0, X1, X2 (descripción X0 = X1 * X2)
 */
 
 
-void updateFlags(int64_t result) {
-    NEXT_STATE.FLAG_N = (result < 0);
-    NEXT_STATE.FLAG_Z = (result == 0);
-}
 
 /*
 add(char * restOfInstruction, bool updateFlags, bool extended, bool immediate);
