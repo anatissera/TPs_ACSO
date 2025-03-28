@@ -60,9 +60,13 @@ void B_cond(uint32_t instruction){
         case 0b1010:  // BGT (Z == 0 y N == V)
             if (!FLAG_Z && (FLAG_N == 0)) { NEXT_STATE.PC = target_address; }
             break;
+        // case 0b1011:  // BLT (N != V)
+        //     if (FLAG_N != 0) { NEXT_STATE.PC = target_address; }
+        //     break;
         case 0b1011:  // BLT (N != V)
-            if (FLAG_N != 0) { NEXT_STATE.PC = target_address; }
+            if (FLAG_N == 1) { NEXT_STATE.PC = target_address; }
             break;
+
         case 0b1100:  // BGE (N == V)
             if (FLAG_N == 0) { NEXT_STATE.PC = target_address; }
             break;
@@ -72,6 +76,10 @@ void B_cond(uint32_t instruction){
         default:
             break;
     }
+    if (NEXT_STATE.PC == CURRENT_STATE.PC) {
+        NEXT_STATE.PC += 4;
+    }
+    
 }
 
 void Cbz_Cbnz(uint32_t instruction){
