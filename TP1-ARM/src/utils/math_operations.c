@@ -59,65 +59,97 @@ int64_t add(uint32_t instruction, bool updateFlags, bool extended, bool immediat
     if (extended)
     {
         // Extended Register: Xd = Xn + Xm
-        uint8_t rn = (instruction >> 5) & 0x1F;  // Bits 5-9 contain Rn
-        uint8_t rm = (instruction >> 16) & 0x1F; // Bits 16-20 contain Rm
+        uint8_t rn = (instruction >> 5) & 0x1F;  // Bits 5-9 
+        uint8_t rm = (instruction >> 16) & 0x1F; // Bits 16-20
+        
+        // nota: cuando compilamos la instrucción ADDS Xd, Xn, Xm el bit 21 de output es 0, no 1.
         result = CURRENT_STATE.REGS[rn] + CURRENT_STATE.REGS[rm];
     } 
     else if (immediate)
     {
         // Immediate: Xd = Xn + imm12 (shifted if shift == 01)
-        uint8_t rn = (instruction >> 5) & 0x1F;  // Bits 5-9 contain Rn
-        int64_t imm12 = (instruction >> 10) & 0xFFF; // Bits 10-21 contain imm12
+        uint8_t rn = (instruction >> 5) & 0x1F;  // Bits 5-9
+        int64_t imm12 = (instruction >> 10) & 0xFFF; // Bits 10-21
         
-        // Extract shift from bits 22 and 23 of the instruction
-        uint8_t shift = (instruction >> 22) & 0x3; // Extract bits 22-23
+        uint8_t shift = (instruction >> 22) & 0x3; // shift en bits 22-23
 
         if (shift == 1) {
-            imm12 <<= 12; // Shift imm12 12 bits to the left
+            imm12 <<= 12; // shift imm12 12 bits izq
         } else if (shift == 0) {
-            // No shift
+            // sin shift
         }
         result = CURRENT_STATE.REGS[rn] + imm12;
     }
 
-    if (updateFlags) { // if true, instruction is ADDS
+    if (updateFlags) { // ADDS
         update_flags(result);
     }
 
     return result;
 }
 
-int64_t sub(char * restOfInstruction, bool updateFlags, bool extended, bool immediate)
+int64_t subs_cmp(uint32_t instruction, bool extended, bool immediate)
 {
+    /* 
+    SUBS/CMP (Extended Register, Immediate)
+    
+    For CMP:
+    Extended register: cmp X13, X14 (descripción: XZR = X13 - X14, luego updatear flags).
+    XZR es el registro cero, así que se calcula el resultado y se updatean las flags, pero se tira el resultado.
+    
+    Immediate: cmp X13, 4 (descripción: XZR = X13 - X14, luego updatear flags)
+    
+    X31 debe considerarse como el registro XZR (registro que siempre tiene ceros).
+    */
+    
     int64_t result;
+    uint8_t rd = instruction & 0x1F;  // Bits 0-4
+    
     if (extended)
     {
-        result = CURRENT_STATE.REGS[restOfInstruction[0]] - CURRENT_STATE.REGS[restOfInstruction[1]];
-    } else if (immediate) {
-        result = CURRENT_STATE.REGS[restOfInstruction[0]] - restOfInstruction[1];
+        // Extended Register: Xd = Xn - Xm
+        uint8_t rn = (instruction >> 5) & 0x1F;  // Bits 5-9
+        uint8_t rm = (instruction >> 16) & 0x1F; // Bits 16-20
+        
+        // cuando compilamos la instrucción ADDS Xd, Xn, Xm el bit 21 de output es 0, no 1. 
+        // Por favor asegúrense de que ande ADDS. Lo mismo ocurre con SUBS.
+        result = CURRENT_STATE.REGS[rn] - CURRENT_STATE.REGS[rm];
+    } 
+    else if (immediate)
+    {
+        // Immediate: Xd = Xn - imm12 (shift opcional)
+        uint8_t rn = (instruction >> 5) & 0x1F;  // Bits 5-9
+        int64_t imm12 = (instruction >> 10) & 0xFFF; // Bits 10-21
+        
+        uint8_t shift = (instruction >> 22) & 0x3; // shift en bits 22-23
+
+        if (shift == 1) {
+            imm12 <<= 12; // shift imm12 12 bits izq
+        } else if (shift == 0) {
+            // sin shift
+        }
+        result = CURRENT_STATE.REGS[rn] - imm12;
     }
-    if (updateFlags) { //if true, instruction is SUBS
-        update_flags(result);
-    }
+    
+    // siempre updatear flags para SUBS/CMP
+    update_flags(result);
+    
+    // resultado (se guarda en rn por el caller si no es XZR)
     return result;
 }
 
-int64_t mul(char * restOfInstruction)
+void mul(uint32_t instruction)
 {
     //ejemplo de uso: mul X0, X1, X2 (descripción X0 = X1 * X2) 
     int64_t result;
-    result = CURRENT_STATE.REGS[restOfInstruction[0]] * CURRENT_STATE.REGS[restOfInstruction[1]];
-    CURRENT_STATE.REGS[restOfInstruction[2]] = result;
-    return result;
-}
-
-int64_t cmp(char * restOfInstruction, bool extended, bool immediate)
-{
-    int64_t result;
+    // enmascaro los bits para obtener los números de registro correctos
+    uint8_t rd = instruction & 0x1F;         // Bits 0-4
+    uint8_t rn = (instruction >> 5) & 0x1F;  // Bits 5-9
+    uint8_t rm = (instruction >> 16) & 0x1F; // Bits 16-20
     
+    result = CURRENT_STATE.REGS[rn] * CURRENT_STATE.REGS[rm];
+    NEXT_STATE.REGS[rd] = result;
 }
-
-// The functions are declared to return int64_t and take char* but implemented to return void and take uint32_t.
 
 // extra utils
 void Adds_extended_reg(uint32_t instruction){
@@ -140,6 +172,21 @@ void Add_imm(uint32_t instruction){
     NEXT_STATE.REGS[(instruction >> 0) & 0x1F] = result;
 }
 
+void Subs_cmp_extended_reg(uint32_t instruction){
+    int64_t result = subs_cmp(instruction, true, false);
+    uint8_t rd = (instruction >> 0) & 0x1F;
+    if (rd != 31) { // no escribir en XZR (X31)
+        NEXT_STATE.REGS[rd] = result;
+    }
+}
+
+void Subs_cmp_imm(uint32_t instruction){
+    int64_t result = subs_cmp(instruction, false, true);
+    uint8_t rd = (instruction >> 0) & 0x1F;
+    if (rd != 31) { // no escribir en XZR (X31)
+        NEXT_STATE.REGS[rd] = result;
+    }
+}
 
 /*
 ADDS (Extended Register, Immediate)

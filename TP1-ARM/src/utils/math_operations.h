@@ -23,13 +23,12 @@ void Add_imm(uint32_t instruction);
 
 int64_t add(uint32_t instruction, bool updateFlags, bool extended, bool immediate);
 
-void Subs_Cmp_extended_reg(uint32_t instruction);
-void Subs_Cmp_imm(uint32_t instruction);
-void Mul(uint32_t instruction);
+void Subs_cmp_extended_reg(uint32_t instruction);
+void Subs_cmp_imm(uint32_t instruction);
 
+int64_t subs_cmp(uint32_t instruction, bool extended, bool immediate);
 
-// void Subs_Cmp_extended_reg(uint32_t instruction);
-// void Subs_Cmp_imm(uint32_t instruction);
+void mul(uint32_t instruction);
 
 /*CMPrealiza una comparación entre dos registros. 
 Internamente, esta operación es una resta, pero no almacena el resultado; 
