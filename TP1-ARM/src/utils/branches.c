@@ -5,6 +5,7 @@ void B(uint32_t instruction){
     31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
     0 |0  0  1  0  1 |imm26 (26 bits)
     */
+
     int64_t imm26 = instruction & 0x3FFFFFF;
 
     if (imm26 & (1<<25)){
@@ -13,7 +14,6 @@ void B(uint32_t instruction){
 
     int64_t offset = imm26 << 2;//Lo multiplica por 4 (alineación).
     NEXT_STATE.PC = CURRENT_STATE.PC + offset;
-
     
 }
 
@@ -94,7 +94,7 @@ void Cbz_Cbnz(uint32_t instruction){
 
     uint32_t op = (instruction >> 24) & 0b1;
 
-    int64_t branch_target = (int64_t)CURRENT_STATE.PC + (imm19 << 2);
+    int64_t branch_target = CURRENT_STATE.PC + (imm19 << 2);
 
     if (!op) { // CBZ
         if (Rt_val == 0) {

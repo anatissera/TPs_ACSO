@@ -1,26 +1,5 @@
 #include "load_n_store.h"
 
-/*
-STUR -  
-stur X1, [X2, #0x10]
-
-STURB
-sturb X1, [X2, #0x10]
-
-STURH 
-sturh W1, [X2, #0x10] 
-
-LDUR 
-ldur X1, [X2, #0x10] 
- 
-LDURH 
-ldurh  W1,  [X2,  #0x10] 
-
-LDURB 
-ldurb  W1,  [X2,  #0x10] 
-
-*/
-
 void Stur_h_b(uint32_t instruction) {
      /*
     31 30 29 28 27 26 25 24 23 22 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
