@@ -12,7 +12,7 @@ void B(uint32_t instruction){
         imm26 |= ~((1LL << 26)-1);
     }
 
-    int64_t offset = imm26 << 2; //Lo multiplica por 4 (alineación).
+    int64_t offset = imm26 << 2; // multiplica por 4 (alineación).
     NEXT_STATE.PC = CURRENT_STATE.PC + offset;
     
 }
@@ -52,32 +52,25 @@ void B_cond(uint32_t instruction){
 
     switch (cond) {
         case 0b0000:  // BEQ (Z == 1)
-            if (FLAG_Z) { NEXT_STATE.PC = target_address; }
+            if (CURRENT_STATE.FLAG_Z) { NEXT_STATE.PC = target_address; }
             break;
         case 0b0001:  // BNE (Z == 0)
-            if (!FLAG_Z) { NEXT_STATE.PC = target_address; }
+            if (!CURRENT_STATE.FLAG_Z) { NEXT_STATE.PC = target_address; }
             break;
         case 0b1010:  // BGT (Z == 0 y N == V)
-            if (!FLAG_Z && (FLAG_N == 0)) { NEXT_STATE.PC = target_address; }
+            if (!CURRENT_STATE.FLAG_Z && (CURRENT_STATE.FLAG_N == 0)) { NEXT_STATE.PC = target_address; }
             break;
-        // case 0b1011:  // BLT (N != V)
-        //     if (FLAG_N != 0) { NEXT_STATE.PC = target_address; }
-        //     break;
         case 0b1011:  // BLT (N != V)
-            if (FLAG_N == 1) { NEXT_STATE.PC = target_address; }
+            if (CURRENT_STATE.FLAG_N != 0) { NEXT_STATE.PC = target_address; }
             break;
-
         case 0b1100:  // BGE (N == V)
-            if (FLAG_N == 0) { NEXT_STATE.PC = target_address; }
+            if (CURRENT_STATE.FLAG_N == 0) { NEXT_STATE.PC = target_address; }
             break;
         case 0b1101:  // BLE (Z == 1 o N != V)
-            if (FLAG_Z || (FLAG_N != 0)) { NEXT_STATE.PC = target_address; }
+            if (CURRENT_STATE.FLAG_Z || (CURRENT_STATE.FLAG_N != 0)) { NEXT_STATE.PC = target_address; }
             break;
         default:
             break;
-    }
-    if (NEXT_STATE.PC == CURRENT_STATE.PC) {
-        NEXT_STATE.PC += 4;
     }
     
 }

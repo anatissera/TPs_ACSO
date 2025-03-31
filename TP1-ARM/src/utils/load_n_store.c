@@ -106,12 +106,7 @@ void Ldur_h_b(uint32_t instruction) {
         uint64_t upper_half = ((uint64_t)mem_read_32(effective_address + 4)) << 32;
         *Rt_val = lower_half | upper_half;
     } 
-    // else if (size == 0b01) {  // LDURH (16-bit)
-    //     *Rt_val = mem_read_32(effective_address) & 0xFFFF;
-    // } 
-    // else if (size == 0b00){  // LDURB (8-bit)
-    //     *Rt_val = mem_read_32(effective_address) & 0xFF;
-    // }
+
     else {  
         uint64_t aligned_address = effective_address & ~0b11; 
         uint32_t word = mem_read_32(aligned_address);  

@@ -1,8 +1,3 @@
-// // void Subs_Cmp_extended_reg(uint32_t instruction);
-// // void Subs_Cmp_imm(uint32_t instruction);
-
-#include <stdlib.h>
-
 #include "shell.h"
 
 #include "decoder.h"
@@ -14,12 +9,8 @@
 #include "utils/logical_operations.h"
 #include "utils/math_operations.h"
 
-// typedef struct {
-//   uint32_t opcode;
-//   void (*execute)(uint32_t);
-// } Instruction;
-
 void execute(uint32_t opcode, uint32_t instruction) {
+
   Opcode_Entry instructions[] = {
 
       {0x91, Add_imm},
@@ -27,7 +18,7 @@ void execute(uint32_t opcode, uint32_t instruction) {
       {0xb1, Adds_imm},
       {0xab, Adds_extended_reg},
       {0xf1, Subs_cmp_imm},
-      {0xb1, Subs_cmp_extended_reg},
+      {0b11101011001, Subs_cmp_extended_reg},
       {0x92, mul},
       {0x6a2, HLT},
       {0xea, Ands_shifted_reg},
@@ -47,6 +38,7 @@ void execute(uint32_t opcode, uint32_t instruction) {
       {0b10110100, Cbz_Cbnz}, // Cbz
       {0b10110101, Cbz_Cbnz} // Cbnz
   };
+
   
   for (int i = 0; i < sizeof(instructions) / sizeof(instructions[0]); i++) {
       if (opcode == instructions[i].opcode) {
@@ -64,13 +56,3 @@ void process_instruction() {
       NEXT_STATE.PC += 4;
   }
 }
-
-
-// una función para decode y otra para excecute
-/* 1. Ejecutar la instrucción
-2. decodificarla para saber la operación y los operandos a utilizar
-3. realizar la operación
-4. Actualizar el PC con la proxima instrucción a ejecutar
-*/
-
-// IMPORTANTE: asume que la memoria está en LITTLE ENDIAN

@@ -1,29 +1,98 @@
 #include "decoder.h"
 
-bool match_opcode(uint32_t instruction, uint32_t mask, uint32_t shift, uint32_t expected) {
-    return ((instruction >> shift) & mask) == expected;
+static const uint32_t OPCODE_6BIT = 0b000101;  // B
+
+static const uint32_t OPCODES_8BIT[] = {
+    0xb1, // adds_imm
+    0xab, // adds_ext
+    0xb4, // add_imm
+    0xf1, // subs_imm
+    0xea, // cmp_imm
+    0xaa, // ands_shift
+    0xca, // eor_shift
+    0x54, // orr_shift
+    0x91, // b.cond
+    0xb5  // cbz, cbnz
+}; 
+
+static const uint32_t OPCODE_9BIT = 0b110100101;       // movz
+static const uint32_t OPCODE_10BIT = 0b1101001101;     // ls
+
+static const uint32_t OPCODES_11BIT[] = {
+    0b11010100010, // hlt
+    0b10011011000,  // mul
+    0b11101011001, // subs_ext
+    0b11101011001, // cmp_ext
+    0b11111000000, // stur
+    0b01111000000, // sturh
+    0b00111000000, // sturb
+    0b11111000010, // ldur
+    0b01111000010, // ldurh
+    0b00111000010, // ldurb
+    0b10001011000 // add_ext
+};
+
+
+static const uint32_t OPCODE_22BIT = 0b1101011000011111000000; // BR
+
+static const uint8_t B_COND_CODES[] = {
+    0b0, // B.eq
+    0b1, // B. ne
+    0b1100, // B. gt
+    0b1011, // B. lt
+    0b1010, // B. ge
+    0b1101 // B. le
+}; 
+
+bool check_subs_ext(uint32_t instruction) {
+    uint32_t field = (instruction >> 21) & 0x7FF;  // 11 bits
+    return (field + 1 == 0b11101011001);
+}
+
+uint32_t match_opcode(uint32_t value, const uint32_t* set, int len) {
+    for (int i = 0; i < len; i++) {
+        if (value == set[i]) return set[i];
+    }
+    return (uint32_t)-1;
 }
 
 uint32_t decode(uint32_t instruction) {
-    if (match_opcode(instruction, 0b111111, 26, 0b000101)) return 0b000101; // B
-    
-    uint32_t op8[] = {0xb1, 0xab, 0xf1, 0xea, 0xaa, 0xca, 0x54, 0x91, 0xb4, 0xb5};
-    uint32_t extracted_op8 = (instruction >> 24) & 0xFF;
-    for (int i = 0; i < 10; i++) {
-        if (extracted_op8 == op8[i]) return op8[i];
+    // extracción de 6-bits
+    uint32_t candidate = (instruction >> 26) & 0x3F;
+    if (candidate == OPCODE_6BIT) return candidate;
+
+    // opcode de 8-bits
+    uint32_t op8 = (instruction >> 24) & 0xFF;
+    uint32_t found8 = match_opcode(op8, OPCODES_8BIT, 10);
+    if (found8 != (uint32_t)-1) return found8;
+
+    // 9-bits
+    uint32_t op9 = (instruction >> 23) & 0x1FF;
+    if (op9 == OPCODE_9BIT) return op9;
+
+    // 10-bits
+    uint32_t op10 = (instruction >> 22) & 0x3FF;
+    if (op10 == OPCODE_10BIT) return op10;
+
+    // 11-bits
+    uint32_t op11 = (instruction >> 21) & 0x7FF;
+    uint32_t found11 = match_opcode(op11, OPCODES_11BIT, 11);
+    if (found11 != (uint32_t)-1) return found11;
+
+    // subs_ext
+    if (check_subs_ext(instruction)) return 0b11101011001;
+
+    // BR 22-bits 
+    uint32_t op22 = (instruction >> 10) & 0x3FFFFF;
+    if (op22 == OPCODE_22BIT) return op22;
+
+    return op22;
+}
+
+uint8_t decode_branch_condition(uint32_t instruction) {
+    uint8_t condition = instruction & 0xF;
+    for (int i = 0; i < 6; i++) {
+        if (condition == B_COND_CODES[i]) return i;
     }
-    
-    if (match_opcode(instruction, 0b111111111, 23, 0b110100101)) return 0b110100101; // MOVZ
-    if (match_opcode(instruction, 0b1111111111, 22, 0b1101001101)) return 0b1101001101; // LSL/LSR
-    
-    uint32_t op11[] = {0b11101011001, 0b11010100010, 0b11101011001, 0b11111000000, 0b00111000000,
-                        0b01111000000, 0b11111000010, 0b01111000010, 0b00111000010, 0b10001011000, 0b10011011000};
-    uint32_t extracted_op11 = (instruction >> 21) & 0b11111111111;
-    for (int i = 0; i < 11; i++) {
-        if (extracted_op11 == op11[i]) return op11[i];
-    }
-    
-    if (match_opcode(instruction, 0b1111111111111111111111, 10, 0b1101011000011111000000)) return 0b1101011000011111000000; // BR
-    
-    return -1;
+    return (uint8_t)-1;
 }
