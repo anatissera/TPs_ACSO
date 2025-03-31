@@ -20,7 +20,7 @@ static const uint32_t OPCODE_10BIT = 0b1101001101;     // ls
 
 static const uint32_t OPCODES_11BIT[] = {
     0b11010100010, // hlt
-    0b10011011000,  // mul
+    0b10011011000, // mul
     0b11101011001, // subs_ext
     0b11101011001, // cmp_ext
     0b11111000000, // stur
@@ -29,23 +29,27 @@ static const uint32_t OPCODES_11BIT[] = {
     0b11111000010, // ldur
     0b01111000010, // ldurh
     0b00111000010, // ldurb
-    0b10001011000 // add_ext
+    0b10001011000  // add_ext
 };
-
 
 static const uint32_t OPCODE_22BIT = 0b1101011000011111000000; // BR
 
 static const uint8_t B_COND_CODES[] = {
-    0b0, // B.eq
-    0b1, // B. ne
-    0b1100, // B. gt
-    0b1011, // B. lt
-    0b1010, // B. ge
-    0b1101 // B. le
-}; 
+    0b0,    // B.eq
+    0b1,    // B.ne
+    0b1100, // B.gt
+    0b1011, // B.lt
+    0b1010, // B.ge
+    0b1101  // B.le
+};
+
+// Función genérica para extraer bits desde una posición con longitud específica
+uint32_t extract_bits(uint32_t instruction, int shift, int length) {
+    return (instruction >> shift) & ((1 << length) - 1);
+}
 
 bool check_subs_ext(uint32_t instruction) {
-    uint32_t field = (instruction >> 21) & 0x7FF;  // 11 bits
+    uint32_t field = extract_bits(instruction, 21, 11);
     return (field + 1 == 0b11101011001);
 }
 
@@ -57,40 +61,40 @@ uint32_t match_opcode(uint32_t value, const uint32_t* set, int len) {
 }
 
 uint32_t decode(uint32_t instruction) {
-    // extracción de 6-bits
-    uint32_t candidate = (instruction >> 26) & 0x3F;
-    if (candidate == OPCODE_6BIT) return candidate;
+    // 6-bits
+    uint32_t op6 = extract_bits(instruction, 26, 6);
+    if (op6 == OPCODE_6BIT) return op6;
 
-    // opcode de 8-bits
-    uint32_t op8 = (instruction >> 24) & 0xFF;
+    // 8-bits
+    uint32_t op8 = extract_bits(instruction, 24, 8);
     uint32_t found8 = match_opcode(op8, OPCODES_8BIT, 10);
     if (found8 != (uint32_t)-1) return found8;
 
     // 9-bits
-    uint32_t op9 = (instruction >> 23) & 0x1FF;
+    uint32_t op9 = extract_bits(instruction, 23, 9);
     if (op9 == OPCODE_9BIT) return op9;
 
     // 10-bits
-    uint32_t op10 = (instruction >> 22) & 0x3FF;
+    uint32_t op10 = extract_bits(instruction, 22, 10);
     if (op10 == OPCODE_10BIT) return op10;
 
     // 11-bits
-    uint32_t op11 = (instruction >> 21) & 0x7FF;
+    uint32_t op11 = extract_bits(instruction, 21, 11);
     uint32_t found11 = match_opcode(op11, OPCODES_11BIT, 11);
     if (found11 != (uint32_t)-1) return found11;
 
-    // subs_ext
+    // caso especial: subs_ext
     if (check_subs_ext(instruction)) return 0b11101011001;
 
-    // BR 22-bits 
-    uint32_t op22 = (instruction >> 10) & 0x3FFFFF;
+    // 22-bits
+    uint32_t op22 = extract_bits(instruction, 10, 22);
     if (op22 == OPCODE_22BIT) return op22;
 
     return op22;
 }
 
 uint8_t decode_branch_condition(uint32_t instruction) {
-    uint8_t condition = instruction & 0xF;
+    uint8_t condition = extract_bits(instruction, 0, 4);
     for (int i = 0; i < 6; i++) {
         if (condition == B_COND_CODES[i]) return i;
     }
