@@ -27,11 +27,6 @@ void Stur_h_b(uint32_t instruction) {
     uint64_t effective_address = Rn_val + imm9;
 
     if (size == 0b11){ // STUR (64-bit) 
-        if (effective_address & 0b111) {
-            printf("Error: STUR 64-bit con dirección no alineada a 8 bytes.\n");
-            return;
-        }
-
         uint32_t lower_half = Rt_val & 0xFFFFFFFF;   // bits 0-31 (derecha)
         uint32_t upper_half = (Rt_val >> 32) & 0xFFFFFFFF;  // bits 32-63 (izquierda)
 
@@ -45,9 +40,6 @@ void Stur_h_b(uint32_t instruction) {
         uint32_t original_value = mem_read_32(aligned_address); 
 
         if (size == 0b01) { // STURH (16-bit)
-            if (effective_address & 0b1) {
-                printf("Advertencia: STURH con dirección no alineada a 2 bytes.\n");
-            }
             int half_offset = (effective_address & 0b10) >> 1; // 0 si es la parte baja, 1 si es la alta
             uint32_t mask = ~(0xFFFF << (half_offset * 16)); 
             uint32_t new_value = (Rt_val & 0xFFFF) << (half_offset * 16);
@@ -97,11 +89,6 @@ void Ldur_h_b(uint32_t instruction) {
     uint32_t size = (instruction >> 30) & 0b11;
 
     if (size == 0b11) {  // LDUR (64-bit)
-        if (effective_address & 0b111) {
-            printf("Error: LDUR 64-bit con dirección no alineada a 8 bytes.\n");
-            return;
-        }
-        // little endian
         uint64_t lower_half = mem_read_32(effective_address);
         uint64_t upper_half = ((uint64_t)mem_read_32(effective_address + 4)) << 32;
         *Rt_val = lower_half | upper_half;
@@ -113,9 +100,6 @@ void Ldur_h_b(uint32_t instruction) {
         int byte_offset = effective_address & 0b11;  
 
         if (size == 0b01) { // LDURH (16-bit)
-            if (effective_address & 0b1) {
-                printf("Advertencia: LDURH con dirección no alineada a 2 bytes.\n");
-            }
             uint16_t loaded_value = (word >> (byte_offset * 8)) & 0xFFFF; 
             *Rt_val = (uint64_t)loaded_value;
         } 
