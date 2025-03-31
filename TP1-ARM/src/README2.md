@@ -1,4 +1,8 @@
-SHIFT
+# Instructions y disclaimer
+
+## Instructions
+
+### SHIFT
 LSL (Immediate) 
 lsl X4, X3, 4
 
@@ -6,7 +10,7 @@ LSR (Immediate)
 lsr X4, X3, 4
 
 
-LOGICAL OPERATIONS
+### LOGICAL OPERATIONS
 ANDS (Shifted Register) 
 
 EOR (Shifted Register)
@@ -14,7 +18,7 @@ EOR (Shifted Register)
 ORR (Shifted Register)
 
 
-BRANCHES
+### BRANCHES
 B 
 b target
 
@@ -52,7 +56,7 @@ CBNZ
 cbnz X3, label
 
 
-LOAD AND STORE
+### LOAD AND STORE
 
 STUR -  
 stur X1, [X2, #0x10]
@@ -72,7 +76,7 @@ ldurh  W1,  [X2,  #0x10]
 LDURB 
 ldurb  W1,  [X2,  #0x10] 
  
-MATH
+### MATH
 ADDS (Extended Register, Immediate)
 
 SUBS (Extended Register, Immediate)
@@ -85,8 +89,21 @@ MUL
 mul X0, X1, X2 (descripción X0 = X1 * X2) 
  
 
-ADDITIONALS
+### ADDITIONALS
 HLT
 
 MOVZ 
 movz X1, 10
+
+## Disclaimer
+Correr el makefile de la siguiente manera:
+
+          cd src
+          make clean
+          make
+          make run // para convertir a formato unix si corren con WSL en Windows
+
+Luego para automatizar los tests:
+
+          cd ..
+          bash compare_sims.sh

@@ -1,0 +1,65 @@
+🧪 Resultados de las comparaciones:
+================================================
+Testing math instructions...
+================================================
+🔹 Testing adds.x...
+✅ adds: Step by step OK
+✅ adds: Full execution OK
+----------------------------------------
+🔹 Testing adds-subs.x...
+✅ adds-subs: Step by step OK
+✅ adds-subs: Full execution OK
+----------------------------------------
+⚠️  Skipping add.x: File does not exist
+🔹 Testing addis.x...
+✅ addis: Step by step OK
+✅ addis: Full execution OK
+----------------------------------------
+⚠️  Skipping subis.s: File does not exist
+
+================================================
+Testing shift instructions...
+================================================
+⚠️  Skipping lsl_lsr.x: File does not exist
+
+================================================
+Testing system instructions...
+================================================
+⚠️  Skipping hlt.x: File does not exist
+
+================================================
+Testing branch instructions...
+================================================
+🔹 Testing beq.x...
+✅ beq: Step by step OK
+✅ beq: Full execution OK
+----------------------------------------
+🔹 Testing blt.x...
+✅ blt: Step by step OK
+✅ blt: Full execution OK
+----------------------------------------
+
+================================================
+Testing logical instructions...
+================================================
+🔹 Testing ands.x...
+✅ ands: Step by step OK
+✅ ands: Full execution OK
+----------------------------------------
+🔹 Testing eor.x...
+✅ eor: Step by step OK
+✅ eor: Full execution OK
+----------------------------------------
+
+================================================
+Testing data instructions...
+================================================
+🔹 Testing movz.x...
+✅ movz: Step by step OK
+✅ movz: Full execution OK
+----------------------------------------
+🔹 Testing sturb.x...
+✅ sturb: Step by step OK
+✅ sturb: Full execution OK
+----------------------------------------
+

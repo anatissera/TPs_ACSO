@@ -4,3 +4,12 @@ sim: shell.c sim.c decoder.c utils/additionals.c utils/branches.c utils/load_n_s
 .PHONY: clean
 clean:
 	rm -rf *.o *~ sim
+
+fix-dos:
+	dos2unix ../compare_sims.sh
+
+run: fix-dos
+# Si obtienen un error relacionado con `$'\r': command not found,
+# convierten el archivo a formato Unix antes de ejecutarlo:
+	dos2unix ../compare_sims.sh
+	chmod +x ../compare_sims.sh
