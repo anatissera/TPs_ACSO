@@ -102,3 +102,35 @@ y después sumé los valores (ecx):
 11 + 5 + 10 + 3 + 8 + 0 + 7 + 9 + 12 + 2 + 6 + 15 = 88
 
 por lo que la entrada fue "13 88 "
+
+
+
+secret_phase
+
+Para llegar a la fase secreta lo primero fue entender cómo la invocaba el programa. Al revisar main 
+vi que después de cada fase se llamaba a phase_defused, y que esta función llevaba un contador global 
+num_input_strings que se incrementaba después de cada fase desactivada. Dentro de phase_defused hay 
+un test que salta la fase secreta sólo cuando ese contador vale 4. En ese momento usa un sscanf 
+con formato “%s %d %s” sobre el buffer donde se almacenan todas las entradas, y compara el tercer 
+token con un string, es decir agregaría ese último string al input de la phase_3. 
+Puse un breakpoint justo antes de ese compare en phase_defused, usé x/s <dirección> para 
+leer el string cargado por el lea rsi,[…], y descubrí que la tercera palabra debía ser abrete_sesamo.
+
+Con eso el código avanzaba hasta secret_phase, cuyo input se lee después del de la phase_4.
+
+Esta fase comienza leyendo una línea y convirtiéndola en entero con __strtol (en ebx). 
+A continuación resta 1 a eax y comprueba que quede ≤1000, o explota. Justo después carga en rdi 
+el puntero al nodo raíz del árbol (n1 en 0x4f91f0) y mueve el entero leído a esi, antes de llamar a 
+una función llamada fun7. Puse un breakpoint en ese call a fun7(root, value) para revisar 
+registros: rdi apunta siempre al nodo actual y esi al valor que busco.
+
+Al mirar la implementación de fun7 vi que hacía una búsqueda binaria recursiva: 
+carga el campo value del nodo desde memoria, lo compara con esi y si es mayor va al hijo izquierdo 
+(duplicando el código devuelto), si es menor va al hijo derecho (duplicando y sumando uno), 
+si es igual retorna 0, y si llega a un puntero nulo retorna –1. 
+El único caso en que el código final resulta 1 es cuando, desde la raíz, se compara primero 
+con el hijo derecho y hay coincidencia.
+
+Entonces cargué la dirección de la raíz en $root (y miré su hijo derecho leyendo [root+16] en memoria), 
+lo que resultó ser el puntero al nodo con value 50. 
+Es decir, el input 50 hace que fun7(n1,50) retorne 1, lo que lo hace valor para desactivar esta fase.
